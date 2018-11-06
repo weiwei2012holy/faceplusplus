@@ -1,0 +1,20 @@
+{
+    "name": "weiwei2012holy/faceplusplus",
+    "description": "face++ api",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jerry",
+            "email": "weiwei2012holy@hotmail.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^6.3"
+    },
+    "minimum-stability": "stable",
+    "autoload": {
+        "psr-4": {
+            "weiwei2012holy\\": "src/"
+        }
+    }
+}
