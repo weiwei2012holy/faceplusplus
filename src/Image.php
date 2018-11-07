@@ -19,35 +19,37 @@ class Image extends FaceBase
     /**
      * 人脸融合
      * @param        $templateFile
-     * @param        $templateType
      * @param        $templateRectangle
      * @param        $mergeFile
-     * @param        $mergeType
      * @param string $mergeRectangle
      * @param int    $mergeRate
      * @return array
      * @throws FacePlusPlusException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function mergeFace($templateFile, $templateType, $templateRectangle, $mergeFile, $mergeType, $mergeRectangle = '', $mergeRate = 50)
+    public function mergeFace($templateFile, $templateRectangle, $mergeFile, $mergeRectangle = '', $mergeRate = 50)
     {
-        if (!in_array($templateType, $this->imageType)) {
-            throw new FacePlusPlusException('模板类型限定:' . implode(',', $this->imageType));
-        }
-        if (!in_array($mergeType, $this->imageType)) {
-            throw new FacePlusPlusException('素材类型限定:' . implode(',', $this->imageType));
-        }
+        $templateType = $this->checkImageType($templateFile);
+        $mergeType = $this->checkImageType($mergeFile);
         $params = [
             'http_errors' => false,
-            'form_params' => [
-                'api_key' => $this->apiKey,
-                'api_secret' => $this->apiSecret,
-                'template_' . $templateType => $templateFile,
-                'template_rectangle' => $templateRectangle,
-                'merge_' . $mergeType => $mergeFile,
-                'merge_rectangle' => $mergeRectangle,
-                'merge_rate' => $mergeRate,
+            'multipart' => [
+                ['name' => 'api_key', 'contents' => $this->apiKey],
+                ['name' => 'api_secret', 'contents' => $this->apiSecret],
+                ['name' => 'template_rectangle', 'contents' => $templateRectangle],
+                ['name' => 'merge_rectangle', 'contents' => $mergeRectangle],
+                ['name' => 'merge_rate', 'contents' => $mergeRate],
             ]];
+        if ($templateType == 'file') {
+            $params['multipart'][] = ['name' => 'template_' . $templateType, 'contents' => fopen($templateFile, 'r')];
+        } else {
+            $params['multipart'][] = ['name' => 'template_' . $templateType, 'contents' => $templateFile];
+        }
+        if ($mergeType == 'file') {
+            $params['multipart'][] = ['name' => 'merge_' . $mergeType, 'contents' => fopen($mergeFile, 'r')];
+        } else {
+            $params['multipart'][] = ['name' => 'merge_' . $mergeType, 'contents' => $mergeFile];
+        }
         return $this->request($this->mergeFaceUrl, $params, 'POST');
     }
 

@@ -24,7 +24,7 @@ $angle = ['top', 'left', 'width', 'height'];
 
 $mUrl = 'https://wx-static.yidejia.com/fandom1541484919647';
 //发起人脸分析
-$mUrlDetail = $face->detect($mUrl, 'url');
+$mUrlDetail = $face->detect($mUrl);
 $mUrlFace = $mUrlDetail['faces'][0];
 foreach ($angle as $item) {
     $mAngle[$item] = $mUrlFace['face_rectangle'][$item];
@@ -33,7 +33,7 @@ $mAngle = implode(',', $mAngle);
 print_r($mUrlFace);
 
 $tUrl = 'http://img2.jiemian.com/101/original/20160129/145404008426286800.jpg';
-$tUrlDetail = $face->detect($tUrl, 'url');
+$tUrlDetail = $face->detect($tUrl);
 $tUrlFace = $tUrlDetail['faces'][0];
 foreach ($angle as $item) {
     $tAngle[$item] = $tUrlFace['face_rectangle'][$item];
@@ -41,7 +41,7 @@ foreach ($angle as $item) {
 $tAngle = implode(',', $tAngle);
 print_r($tUrlFace);
 //发起人脸融合
-$res = $image->mergeFace($tUrl, 'url', $tAngle, $mUrl, 'url', $mAngle, 70);
+$res = $image->mergeFace($tUrl,  $tAngle, $mUrl,  $mAngle, 70);
 
 print_r($res);
 

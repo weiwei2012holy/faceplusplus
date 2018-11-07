@@ -91,4 +91,50 @@ abstract class FaceBase
         return json_decode($response->getContents(), 1);
     }
 
+    /**
+     * 校验数据文件类型
+     * @param $imageData
+     * @return string
+     * @throws FacePlusPlusException
+     */
+    protected function checkImageType($imageData)
+    {
+        if (file_exists($imageData)) {
+            //检验是否为本地文件
+            $type = 'file';
+        } elseif ($this->checkUrl($imageData)) {
+            $type = 'url';
+        } elseif ($this->checkBase64($imageData)) {
+            $type = 'base64';
+        } else {
+            throw new FacePlusPlusException('图片类型限定:' . implode(',', $this->imageType));
+        }
+        return $type;
+    }
+
+    /**
+     * 校验是否为合法的网页链接
+     * @param $string
+     * @return bool
+     */
+    protected function checkUrl($string)
+    {
+        $parse = parse_url($string);
+        if ($parse['host'] && $parse['path']) {
+            return $string;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 校验base64
+     * @param $string
+     * @return bool
+     */
+    protected function checkBase64($string)
+    {
+        return base64_decode($string, true) ? true : false;
+    }
+
 }

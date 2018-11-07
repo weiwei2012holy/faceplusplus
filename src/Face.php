@@ -21,7 +21,6 @@ class Face extends FaceBase
     /**
      * 人脸分析
      * @param string $file             图片内容
-     * @param string $type             图片类型
      * @param int    $returnLandMark   是否检测并返回人脸关键点(0=忽略,1=83关键点,2=106关键点)
      * @param null   $returnAttributes 是否检测并返回根据人脸特征判断出的年龄、性别、情绪等属性,
      *                                 可选(gender,age,smiling,headpose,facequality,blur,eyestatus,emotion,ethnicity,beauty,mouthstatus,eyegaze,skinstatus)
@@ -32,22 +31,25 @@ class Face extends FaceBase
      * @throws FacePlusPlusException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function detect($file, $type, $returnLandMark = 0, $returnAttributes = null, $calculateAll = 0, $faceRectangle = '')
+    public function detect($file, $returnLandMark = 0, $returnAttributes = null, $calculateAll = 0, $faceRectangle = '')
     {
-        if (!in_array($type, $this->imageType)) {
-            throw new FacePlusPlusException('图片类型限定:' . implode(',', $this->imageType));
-        }
+
+        $type = $this->checkImageType($file);
         $params = [
             'http_errors' => false,
-            'form_params' => [
-                'api_key' => $this->apiKey,
-                'api_secret' => $this->apiSecret,
-                'image_' . $type => $file,
-                'return_landmark' => $returnLandMark,
-                'return_attributes' => $returnAttributes,
-                'face_rectangle' => $faceRectangle,
-                'calculate_all' => $calculateAll,
+            'multipart' => [
+                ['name' => 'api_key', 'contents' => $this->apiKey],
+                ['name' => 'api_secret', 'contents' => $this->apiSecret],
+                ['name' => 'return_landmark', 'contents' => $returnLandMark],
+                ['name' => 'return_attributes', 'contents' => $returnAttributes],
+                ['name' => 'face_rectangle', 'contents' => $faceRectangle],
+                ['name' => 'calculate_all', 'contents' => $calculateAll],
             ]];
+        if ($type == 'file') {
+            $params['multipart'][] = ['name' => 'image_' . $type, 'contents' => fopen($file, 'r')];
+        } else {
+            $params['multipart'][] = ['name' => 'image_' . $type, 'contents' => $file];
+        }
         return $this->request($this->detectUrl, $params, 'POST');
     }
 
