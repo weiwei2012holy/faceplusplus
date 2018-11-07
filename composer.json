@@ -1,6 +1,7 @@
 {
     "name": "weiwei2012holy/faceplusplus",
     "description": "face++ api",
+    "type": "library",
     "license": "MIT",
     "authors": [
         {
@@ -9,9 +10,10 @@
         }
     ],
     "require": {
-        "guzzlehttp/guzzle": "^6.3"
+        "php": ">=5.5.0",
+        "guzzlehttp/guzzle": "~6.0"
     },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "weiwei2012holy\\": "src/"

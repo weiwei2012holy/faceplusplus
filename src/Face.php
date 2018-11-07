@@ -23,7 +23,8 @@ class Face extends FaceBase
      * @param string $file             图片内容
      * @param string $type             图片类型
      * @param int    $returnLandMark   是否检测并返回人脸关键点(0=忽略,1=83关键点,2=106关键点)
-     * @param null   $returnAttributes 是否检测并返回根据人脸特征判断出的年龄、性别、情绪等属性
+     * @param null   $returnAttributes 是否检测并返回根据人脸特征判断出的年龄、性别、情绪等属性,
+     *                                 可选(gender,age,smiling,headpose,facequality,blur,eyestatus,emotion,ethnicity,beauty,mouthstatus,eyegaze,skinstatus)
      * @param int    $calculateAll     是否检测并返回所有人脸的人脸关键点和人脸属性
      * @param string $faceRectangle    是否指定人脸框位置进行人脸检测,参数规格：四个正整数，用逗号分隔，依次代表人脸框左上角纵坐标（top），
      *                                 左上角横坐标（left），人脸框宽度（width），人脸框高度（height）。例如：70,80,100,100

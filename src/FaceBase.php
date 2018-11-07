@@ -20,7 +20,7 @@ abstract class FaceBase
     protected $apiSecret;
 
     /**
-     * 图片来源格式
+     * 图片来源格式,图片,文件,base64编码
      * @var array
      */
     protected $imageType = ['url', 'file', 'base64'];

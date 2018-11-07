@@ -18,26 +18,34 @@ class Image extends FaceBase
 
     /**
      * 人脸融合
-     * @param        $templateUrl
+     * @param        $templateFile
+     * @param        $templateType
      * @param        $templateRectangle
-     * @param        $mergeUrl
+     * @param        $mergeFile
+     * @param        $mergeType
+     * @param string $mergeRectangle
      * @param int    $mergeRate
-     * @param string $merge_rectangle
-     * @return mixed
+     * @return array
      * @throws FacePlusPlusException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function mergeFace($templateUrl, $templateRectangle, $mergeUrl, $merge_rectangle = '', $mergeRate = 50)
+    public function mergeFace($templateFile, $templateType, $templateRectangle, $mergeFile, $mergeType, $mergeRectangle = '', $mergeRate = 50)
     {
+        if (!in_array($templateType, $this->imageType)) {
+            throw new FacePlusPlusException('模板类型限定:' . implode(',', $this->imageType));
+        }
+        if (!in_array($mergeType, $this->imageType)) {
+            throw new FacePlusPlusException('素材类型限定:' . implode(',', $this->imageType));
+        }
         $params = [
             'http_errors' => false,
             'form_params' => [
                 'api_key' => $this->apiKey,
                 'api_secret' => $this->apiSecret,
-                'template_url' => $templateUrl,
+                'template_' . $templateType => $templateFile,
                 'template_rectangle' => $templateRectangle,
-                'merge_url' => $mergeUrl,
-                'merge_rectangle' => $merge_rectangle,
+                'merge_' . $mergeType => $mergeFile,
+                'merge_rectangle' => $mergeRectangle,
                 'merge_rate' => $mergeRate,
             ]];
         return $this->request($this->mergeFaceUrl, $params, 'POST');
