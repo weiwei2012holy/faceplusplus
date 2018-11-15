@@ -11,26 +11,26 @@ namespace weiwei2012holy;
 class Image extends FaceBase
 {
     /**
-     * @var string 人脸融合api
+     * @var string 图像识别api
      */
-    private $mergeFaceUrl = 'https://api-cn.faceplusplus.com/imagepp/v1/mergeface';
+    private $url = 'https://api-cn.faceplusplus.com/imagepp/v1/%s';
 
 
     /**
      * 人脸融合
+     *
      * @param        $templateFile
      * @param        $templateRectangle
      * @param        $mergeFile
      * @param string $mergeRectangle
      * @param int    $mergeRate
+     *
      * @return array
      * @throws FacePlusPlusException
      * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function mergeFace($templateFile, $templateRectangle, $mergeFile, $mergeRectangle = '', $mergeRate = 50)
     {
-        $templateType = $this->checkImageType($templateFile);
-        $mergeType = $this->checkImageType($mergeFile);
         $params = [
             'http_errors' => false,
             'multipart' => [
@@ -40,17 +40,9 @@ class Image extends FaceBase
                 ['name' => 'merge_rectangle', 'contents' => $mergeRectangle],
                 ['name' => 'merge_rate', 'contents' => $mergeRate],
             ]];
-        if ($templateType == 'file') {
-            $params['multipart'][] = ['name' => 'template_' . $templateType, 'contents' => fopen($templateFile, 'r')];
-        } else {
-            $params['multipart'][] = ['name' => 'template_' . $templateType, 'contents' => $templateFile];
-        }
-        if ($mergeType == 'file') {
-            $params['multipart'][] = ['name' => 'merge_' . $mergeType, 'contents' => fopen($mergeFile, 'r')];
-        } else {
-            $params['multipart'][] = ['name' => 'merge_' . $mergeType, 'contents' => $mergeFile];
-        }
-        return $this->request($this->mergeFaceUrl, $params, 'POST');
+        $params['multipart'][] = $this->buildPostMultipart($templateFile, 'template');
+        $params['multipart'][] = $this->buildPostMultipart($mergeFile, 'merge');
+        return $this->request(sprintf($this->url, 'mergeface'), $params, 'POST');
     }
 
 }
