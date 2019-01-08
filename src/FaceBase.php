@@ -91,18 +91,17 @@ abstract class FaceBase
             $logMsg = [
                 'desc' => 'face++ detect api 调用失败',
                 'url' => $url,
-                'error_detail' => json_decode($res->getBody()->getContents(), 1)
+                'return_data' => json_decode($res->getBody()->getContents(), 1)
             ];
-            $msg = 'Face++调用错误(' . $logMsg['error_detail']['error_message'] . ')';
+            $msg = 'Face++调用错误(' . $logMsg['return_data']['error_message'] . ')';
             foreach ($this->errors as $k => $v) {
-                if (stripos($logMsg['error_detail']['error_message'], $k) !== false) {
-                    $msg = $v . '(' . $logMsg['error_detail']['error_message'] . ')';
+                if (stripos($logMsg['return_data']['error_message'], $k) !== false) {
+                    $msg = $v . '(' . $logMsg['return_data']['error_message'] . ')';
                 }
             }
-            throw new FacePlusPlusException($msg, $res->getStatusCode());
+            throw new FacePlusPlusException($msg, $res->getStatusCode(), null, $logMsg);
         }
-        $response = $res->getBody();
-        return json_decode($response->getContents(), 1);
+        return json_decode($res->getBody()->getContents(), 1);
     }
 
     /**
